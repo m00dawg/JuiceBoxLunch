@@ -60,7 +60,7 @@ def insert_into_influx(vars, raw):
                 }
             }
             ]
-            print json_body
+            #print json_body
             influx.write_points(json_body)
         except Exception, e:
             print e
