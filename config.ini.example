@@ -1,0 +1,14 @@
+[serial]
+port = /dev/ttyUSB0
+baudrate = 9600
+
+[juicebox]
+id=(grab from serial output)
+
+[influx]
+update = True
+host = <ip>
+port = 8086
+user = user
+password = password 
+db = JuiceBox
