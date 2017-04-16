@@ -14,6 +14,7 @@ baudrate = config.getint('serial', 'baudrate')
 serial_port = config.get('serial' ,'port')
 
 # Internal variables
+valid_row = False
 serial_input = []
 line = []
 row = []
@@ -50,17 +51,17 @@ def insert_into_influx(vars, raw):
                     "id": vars['id']
                 },
                 "fields": {
-                    "voltage": int(vars['voltage']),
-                    "frequency": int(vars['frequency']),
-                    "amps": int(vars['amps']),
-                    "temperature": int(vars['temperature']),
-                    "state": int(vars['state']),
-                    "energy": int(vars['energy']),
+                    "voltage": vars['voltage'],
+                    "frequency": vars['frequency'],
+                    "amps": vars['amps'],
+                    "temperature": vars['temperature'],
+                    "state": vars['state'],
+                    "energy": vars['energy'],
                     "raw": str(raw),
                 }
             }
             ]
-            #print json_body
+            print json_body
             influx.write_points(json_body)
         except Exception, e:
             print e
@@ -87,17 +88,24 @@ while True:
                 for item in juice_vars_raw:
                     if(item.startswith('V')):
                         juice_vars['voltage'] = int(item[1:])
+                        valid_row = True
                     if(item.startswith('f')):
                         juice_vars['frequency'] = int(item[1:])
+                        valid_row = True
                     if(item.startswith('A')):
                         juice_vars['amps'] = int(item[1:])
+                        valid_row = True
                     if(item.startswith('E')):
                         juice_vars['energy'] = int(item[1:])
+                        valid_row = True
                     if(item.startswith('T')):
                         juice_vars['temperature'] = int(item[1:])
+                        valid_row = True
                     if(item.startswith('S')):
                         juice_vars['state'] = int(item[1:])
-                insert_into_influx(juice_vars,line)
-#                print juice_vars
-#                print "Raw:"
-#                print line
+                        valid_row = True
+                if(valid_row):
+                   insert_into_influx(juice_vars,line)
+                   valid_row = False
+                print "Raw:"
+                print line
